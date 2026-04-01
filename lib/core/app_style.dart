@@ -12,4 +12,9 @@ class AppColors {
   static const primary = Color(0xffD10713);
   static const white = Colors.white;
   static const grey = Colors.grey;
+  static const background_gradient = LinearGradient(
+    colors: [Color(0xff39101E), AppColors.background],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 }
