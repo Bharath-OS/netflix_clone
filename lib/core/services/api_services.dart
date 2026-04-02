@@ -74,4 +74,21 @@ class ApiServices {
       return null;
     }
   }
+
+  Future<MovieModel?> getMovieById(int movieId) async {
+    final endpoint = "/movie/$movieId";
+    final apiURL = Uri.parse("$BASE_URL$endpoint?language=en-US");
+
+    try {
+      http.Response response = await http.get(apiURL, headers: _headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return MovieModel.fromJson(data);
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      return null;
+    }
+    return null;
+  }
 }

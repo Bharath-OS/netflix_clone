@@ -4,8 +4,10 @@ import 'package:movflix/core/services/api_services.dart';
 import 'package:movflix/core/utils.dart';
 
 import '../../core/app_style.dart';
+import '../../core/reusable_widgets/error_widget.dart';
 import '../../data/movie.dart';
 import '../../data/movie_model.dart';
+import '../movie_details.dart';
 
 class NetflixHomeScreen extends StatefulWidget {
   const NetflixHomeScreen({super.key});
@@ -130,30 +132,6 @@ class _NetflixHomeScreenState extends State<NetflixHomeScreen> {
   }
 }
 
-Widget buildErrorWidget(String message, VoidCallback future) {
-  return SizedBox(
-    height: 530,
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Error: $message',
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: future,
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('Retry', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 Widget buildMovieTypes({
   required Future<List<MovieModel>?> future,
   required String title,
@@ -200,7 +178,14 @@ Widget buildMovieTypeListView(List<MovieModel> movies) {
         return Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MovieDetails(movieId: movie.id),
+                ),
+              );
+            },
             child: Container(
               width: 130,
               decoration: BoxDecoration(
@@ -235,7 +220,14 @@ Widget buildFeaturedShow(Movies movies) {
               final movie = movies.results[index];
               final path = movie.posterPath;
               return GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MovieDetails(movieId: movie.id),
+                    ),
+                  );
+                },
                 child: Container(
                   height: 530,
                   width: 388,
