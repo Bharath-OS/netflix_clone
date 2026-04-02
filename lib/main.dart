@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-import 'package:movflix/presentation/onboardings/onboarding_template.dart';
+import 'package:movflix/presentation/splash/splash.dart';
 import 'core/app_style.dart';
 
 void main() {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppStyle.darkTheme,
-      home: const OnboardingTemplate(),
+      home: const SplashScreen(),
     );
   }
 }

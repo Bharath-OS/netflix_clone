@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:movflix/presentation/navigations.dart';
 
-class OnboardingTemplate extends StatefulWidget {
-  const OnboardingTemplate({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<OnboardingTemplate> createState() => _OnboardingTemplateState();
+  State<SplashScreen> createState() => _OnboardingTemplateState();
 }
 
-class _OnboardingTemplateState extends State<OnboardingTemplate> {
+class _OnboardingTemplateState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();

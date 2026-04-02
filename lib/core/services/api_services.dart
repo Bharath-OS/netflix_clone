@@ -54,4 +54,24 @@ class ApiServices {
       return null;
     }
   }
+
+  Future<List<MovieModel>?> getPopularMovies() async {
+    final endpoint = "/movie/popular";
+    final apiURL = Uri.parse("$BASE_URL$endpoint?language=en-US&page=1");
+
+    try {
+      http.Response response = await http.get(apiURL, headers: _headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body)['results'] as List;
+        final movies = data.map((movie) => MovieModel.fromJson(movie)).toList();
+        return movies;
+      } else {
+        debugPrint('Server Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      return null;
+    }
+  }
 }

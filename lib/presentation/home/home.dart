@@ -17,11 +17,20 @@ class NetflixHomeScreen extends StatefulWidget {
 class _NetflixHomeScreenState extends State<NetflixHomeScreen> {
   late Future<Movies?> nowPlayingFuture;
   late Future<List<MovieModel>?> upcomingFuture;
+  late Future<List<MovieModel>?> popularFuture;
 
   @override
   void initState() {
     super.initState();
     _fetchMovies();
+    _fetchUpcomingMovies();
+    _fetchPopularMovies();
+  }
+
+  void _fetchPopularMovies() {
+    setState(() {
+      popularFuture = ApiServices().getPopularMovies();
+    });
   }
 
   void _fetchUpcomingMovies() {
@@ -98,11 +107,18 @@ class _NetflixHomeScreenState extends State<NetflixHomeScreen> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   buildMovieTypes(
-                    future: nowPlayingFuture,
+                    future: upcomingFuture,
                     title: 'Upcoming',
                     onTap: _fetchUpcomingMovies,
+                  ),
+
+                  SizedBox(height: 10),
+                  buildMovieTypes(
+                    future: popularFuture,
+                    title: 'Popular Movies',
+                    onTap: _fetchPopularMovies,
                   ),
                 ],
               ),
@@ -139,7 +155,7 @@ Widget buildErrorWidget(String message, VoidCallback future) {
 }
 
 Widget buildMovieTypes({
-  required Future<dynamic> future,
+  required Future<List<MovieModel>?> future,
   required String title,
   required VoidCallback onTap,
   bool isReverse = false,
@@ -149,7 +165,7 @@ Widget buildMovieTypes({
     children: [
       Text(title, style: buttonTextStyle(AppColors.white)),
       SizedBox(height: 10),
-      FutureBuilder<dynamic>(
+      FutureBuilder<List<MovieModel>?>(
         future: future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -160,7 +176,7 @@ Widget buildMovieTypes({
           } else if (snapshot.hasError) {
             return buildErrorWidget(snapshot.error.toString(), onTap);
           } else if (snapshot.hasData && snapshot.data != null) {
-            return buildUpcomingShow(snapshot.data!);
+            return buildMovieTypeListView(snapshot.data!);
           } else {
             return buildErrorWidget('No data found', onTap);
           }
@@ -170,16 +186,16 @@ Widget buildMovieTypes({
   );
 }
 
-Widget buildUpcomingShow(Movies movies) {
+Widget buildMovieTypeListView(List<MovieModel> movies) {
   return SizedBox(
     height: 180,
     width: double.maxFinite,
     child: ListView.builder(
       reverse: true,
-      itemCount: movies.results.length,
+      itemCount: movies.length,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
-        final movie = movies.results[index];
+        final movie = movies[index];
         final path = movie.posterPath;
         return Padding(
           padding: const EdgeInsets.only(left: 8.0),
