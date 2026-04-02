@@ -111,4 +111,24 @@ class ApiServices {
       return null;
     }
   }
+
+  Future<List<MovieModel>?> searchMovies(String query) async {
+    final endpoint = "/search/movie?query=$query";
+    final apiURL = Uri.parse(
+      "$BASE_URL$endpoint&include_adult=false&language=en-US&page=1",
+    );
+    try {
+      http.Response response = await http.get(apiURL, headers: _headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body)['results'] as List;
+        return data.map((movie) => MovieModel.fromJson(movie)).toList();
+      } else {
+        debugPrint('Server Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      return null;
+    }
+  }
 }
