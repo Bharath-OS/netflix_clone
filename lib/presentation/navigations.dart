@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movflix/core/app_style.dart';
 import 'package:movflix/presentation/home/home.dart';
 import 'package:movflix/presentation/search/search.dart';
 
@@ -9,10 +10,16 @@ class AppNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const Color selectedColor = AppColors.white;
+    const Color unselectedColor = AppColors.grey;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         bottomNavigationBar: TabBar(
+          labelColor: selectedColor,
+          indicatorColor: selectedColor,
+          unselectedLabelColor: unselectedColor,
           tabs: [
             Tab(icon: Icon(Icons.home_outlined), text: "Home"),
             Tab(icon: Icon(Icons.search_rounded), text: "Search"),
