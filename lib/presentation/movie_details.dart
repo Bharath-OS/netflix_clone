@@ -17,17 +17,24 @@ class MovieDetails extends StatefulWidget {
 
 class _MovieDetailsState extends State<MovieDetails> {
   late Future<MovieModel?> movieFuture;
+  late Future<List<MovieModel>?> movieRecommendationsFuture;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     movieFuture = ApiServices().getMovieById(widget.movieId);
+    movieRecommendationsFuture = ApiServices().getMovieRecommendations(
+      widget.movieId,
+    );
   }
 
   void fetchMovieDetails() async {
     setState(() {
       movieFuture = ApiServices().getMovieById(widget.movieId);
+      movieRecommendationsFuture = ApiServices().getMovieRecommendations(
+        widget.movieId,
+      );
     });
   }
 
@@ -70,6 +77,8 @@ class _MovieDetailsState extends State<MovieDetails> {
       children: [
         buildVideoPlaySection(movie, size),
         buildMovieDetailsSection(movie),
+
+        buildMovieRecommendations(movie.id),
       ],
     );
   }
@@ -136,7 +145,7 @@ class _MovieDetailsState extends State<MovieDetails> {
     int minutes = (movie.runtime! % 60);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16,
@@ -224,6 +233,73 @@ class _MovieDetailsState extends State<MovieDetails> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildMovieRecommendations(int movieId) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Divider(color: AppColors.white, thickness: 1),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 20, top: 10),
+            child: Text('More Like This', style: movieTitleStyle),
+          ),
+          FutureBuilder<List<MovieModel>?>(
+            future: movieRecommendationsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.hasData && snapshot.data != null) {
+                final movies = snapshot.data!;
+                return SizedBox(
+                  height: 200,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: movies.length,
+                    itemBuilder: (context, index) {
+                      final movie = movies[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MovieDetails(movieId: movie.id),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 130,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                "$BASE_IMAGE_URL${movie.posterPath}",
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              } else {
+                return const Text('No recommendations found');
+              }
+            },
           ),
         ],
       ),
